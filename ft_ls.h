@@ -20,7 +20,7 @@ typedef struct		s_ls
 	char			*nm;
 	size_t			nm_len;
 	char			*way;
-	size_t			max;
+	int				max;
 	int				inv;
 	struct s_ls		*next;
 	struct s_ls 	*par;
@@ -28,7 +28,7 @@ typedef struct		s_ls
 typedef struct		s_t
 {
 	char			*way;
-	size_t			max;
-	struct s_ls		*next;
+	int				max;
+	struct s_t		*next;
 }					t_t;
 #endif
