@@ -26,7 +26,6 @@ t_btree		*btree_create_node(char *item)
 		tree->item = item;
 		tree->left = NULL;
 		tree->right = NULL;
-		tree->content = NULL;//malloc(sizeof(t_btree));
 	}
 	return (tree);
 }
@@ -67,10 +66,8 @@ void	ft_print_tree(t_btree *root)
 	else
 	{
 		ft_print_tree(tree->left);
-		//ft_print_tree(tree->content);
 		printf("%s\n", tree->item);
 		ft_print_tree(tree->right);
-
 	}
 }
 
@@ -101,53 +98,47 @@ void 	ft_create_tree_r(t_btree *root, t_btree *new)
 	}
 }
 
-t_btree	*ft_ls_simple(char *name, t_btree *root, int flag)
+int	ft_ls_simple(char *name, int flag)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
 	int				i;
-	char *t;
+	t_btree			*root;
 
 	i = 0;
+	//printf("%s\n", "--");
 	if (!(dirp = opendir(name)))
-		return (NULL);
-	t = ft_strjoinchar(name, '/', 0);
+		return (0);
 	while ((dp = readdir(dirp)))
 	{
-		// if (dp->d_name[0] != '.' && flag == 0)
-		// {
-		// 	i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree(root, btree_create_node(dp->d_name));
-		// 	i = 1;
-		// }
-		// if (flag == 1)
-		// {
-		// 	i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree(root, btree_create_node(dp->d_name));
-		// 	i = 1;
-		// }
-		// if (dp->d_name[0] != '.' && flag == 2)
-		// {
-		// 	i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree_r(root, btree_create_node(dp->d_name));
-		// 	i = 1;
-		// }
-		// if (flag == 3)
-		// {
-		// 	i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree_r(root, btree_create_node(dp->d_name));
-		// 	i = 1;
-		// }
-		if (ft_strcmp(dp->d_name, ".") != 0 && ft_strcmp(dp->d_name, "..") != 0 && dp->d_name[0] != '.' && flag == 4)
+		if (dp->d_name[0] != '.' && flag == 0)
 		{
-			//printf("--%s\n", dp->d_name);
 			i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree(root, btree_create_node(dp->d_name));
-			//if (ft_strcmp(dp->d_name, "XXX") == 0)
-			//	printf("--%s\n", root->item);
 			i = 1;
-			root->content = ft_ls_simple(ft_strjoin_free(t, dp->d_name, 0, 0), root->content, flag);
-			//if (ft_strcmp(dp->d_name, "zzzzzzzzzz") == 0)
-			//	printf("--%s\n", root->content->item);
 		}
+		if (flag == 1)
+		{
+			i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree(root, btree_create_node(dp->d_name));
+			i = 1;
+		}
+		if (dp->d_name[0] != '.' && flag == 2)
+		{
+			i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree_r(root, btree_create_node(dp->d_name));
+			i = 1;
+		}
+		if (flag == 3)
+		{
+			i == 0 ? root = btree_create_node(dp->d_name) : ft_create_tree_r(root, btree_create_node(dp->d_name));
+			i = 1;
+		}
+		// if (ft_strcmp(dp->d_name, ".") != 0 && ft_strcmp(dp->d_name, "..") != 0 && dp->d_name[0] != '.' && flag == 0)
+		// {
+		// 	ft_ls_simple(ft_strjoin_free(ft_strjoinchar(name, '/', 0), dp->d_name, 0, 0), 0);
+		// }
 	}
+	ft_print_tree(root);
 	(void)closedir(dirp);
-	return (root);
+	return (1);
 }
 
 void 	ft_check_flags(char *s, char *arr)
@@ -174,20 +165,14 @@ int		ft_error_flags(char *arr)
 
 void 	ft_separ(char *arr, char *s)
 {
-	t_btree *root;
-
 	if (s[0] == '-')
 		s = ".";
-	root = btree_create_node(s);
 	if (ft_strchr(arr, 'a') && ft_strchr(arr, 'r'))
-		ft_ls_simple(s, root, 3);
+		ft_ls_simple(s, 3);
 	else if (ft_strchr(arr, 'a'))
-		ft_ls_simple(s, root, 1);
+		ft_ls_simple(s, 1);
 	else if (ft_strchr(arr, 'r'))
-		ft_ls_simple(s, root, 2);
-	else if (ft_strchr(arr, 'R'))
-		root = ft_ls_simple(s, root, 4);
-	ft_print_tree(root);
+		ft_ls_simple(s, 2);
 }
 
 int		main(int argc, char **argv)
@@ -199,12 +184,12 @@ int		main(int argc, char **argv)
 	ft_memset(arr, '-', 128);
 	arr[128] = 0;
 	if (argc == 1)
-		ft_ls_simple(".", NULL, 0);
+		ft_ls_simple(".", 0);
 	else
 	{
 		while (++i < argc)
 			ft_check_flags(argv[i], arr);
-		ft_error_flags(arr) ? ft_ls_simple(argv[i - 1], NULL, 0) : ft_separ(arr, argv[i - 1]);
+		ft_error_flags(arr) ? ft_ls_simple(argv[i - 1], 0) : ft_separ(arr, argv[i - 1]);
 	}
 	printf("%s\n", arr);
 	return (0);
